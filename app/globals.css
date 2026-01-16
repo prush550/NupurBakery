@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #fdf4f3;
+  --color-primary-100: #fce8e5;
+  --color-primary-200: #fad5d0;
+  --color-primary-300: #f5b5ac;
+  --color-primary-400: #ee8a7e;
+  --color-primary-500: #e35e4f;
+  --color-primary-600: #d04333;
+  --color-primary-700: #ae3428;
+  --color-primary-800: #902e25;
+  --color-primary-900: #772b25;
+
+  --color-secondary-50: #fdfcf3;
+  --color-secondary-100: #faf6e5;
+  --color-secondary-200: #f4eacc;
+  --color-secondary-300: #ecdaa8;
+  --color-secondary-400: #e2c47d;
+  --color-secondary-500: #d9ab59;
+  --color-secondary-600: #cc8f4a;
+  --color-secondary-700: #aa713e;
+  --color-secondary-800: #895a39;
+  --color-secondary-900: #704a32;
+}
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+.gradient-text {
+  background: linear-gradient(to right, var(--color-primary-600), var(--color-secondary-600));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-padding {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
