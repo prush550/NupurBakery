@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(gh repo create:*)",
+      "Bash(where:*)",
+      "Bash(gh auth status:*)",
+      "Bash(cmd /c \"gh auth status\")",
+      "Bash(cmd /c \"where gh\")",
+      "Bash(powershell:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
