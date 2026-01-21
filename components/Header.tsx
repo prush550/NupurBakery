@@ -15,18 +15,24 @@ export default function Header() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-8">
-            <Link href="#home" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+          <div className="hidden md:flex items-center space-x-8">
+            <Link href="/" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Home
             </Link>
-            <Link href="#about" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+            <Link href="/#about" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               About
             </Link>
-            <Link href="#products" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+            <Link href="/products" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Products
             </Link>
-            <Link href="#contact" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+            <Link href="/#contact" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Contact
+            </Link>
+            <Link
+              href="/products"
+              className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
+              Order Now
             </Link>
           </div>
 
@@ -58,32 +64,39 @@ export default function Header() {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-4">
             <Link
-              href="#home"
+              href="/"
               className="block text-gray-700 hover:text-primary-600 transition-colors font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               Home
             </Link>
             <Link
-              href="#about"
+              href="/#about"
               className="block text-gray-700 hover:text-primary-600 transition-colors font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               About
             </Link>
             <Link
-              href="#products"
+              href="/products"
               className="block text-gray-700 hover:text-primary-600 transition-colors font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               Products
             </Link>
             <Link
-              href="#contact"
+              href="/#contact"
               className="block text-gray-700 hover:text-primary-600 transition-colors font-medium"
               onClick={() => setIsMenuOpen(false)}
             >
               Contact
+            </Link>
+            <Link
+              href="/products"
+              className="block bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium transition-colors text-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Order Now
             </Link>
           </div>
         )}

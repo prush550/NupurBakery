@@ -45,3 +45,52 @@ export interface ApiResponse<T = unknown> {
   data?: T;
   error?: string;
 }
+
+// Order types
+export interface Order {
+  _id?: ObjectId;
+  id: string;
+  orderNumber: string;
+  productId?: string;
+  productName?: string;
+  productImage?: string;
+  productPrice?: number;
+
+  // Customer details
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerAddress: string;
+
+  // Delivery details
+  deliveryDate: string;
+  deliveryTime: string;
+  deliveryType: 'delivery' | 'pickup';
+
+  // Customization
+  cakeMessage?: string;
+  flavor?: string;
+  weight?: string;
+  specialInstructions?: string;
+
+  // Order metadata
+  status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
+  totalPrice: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OrderFormData {
+  productId?: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  customerAddress: string;
+  deliveryDate: string;
+  deliveryTime: string;
+  deliveryType: 'delivery' | 'pickup';
+  cakeMessage?: string;
+  flavor?: string;
+  weight?: string;
+  specialInstructions?: string;
+}
