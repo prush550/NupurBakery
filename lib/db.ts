@@ -175,3 +175,112 @@ export async function updateOrderStatus(
   );
   return result || null;
 }
+
+export async function getOrdersByPhone(phone: string): Promise<Order[]> {
+  const db = await getDatabase();
+  // Search with flexible phone matching (last 10 digits)
+  const phoneRegex = new RegExp(phone.slice(-10) + '$');
+  const orders = await db.collection<Order>('orders')
+    .find({ customerPhone: { $regex: phoneRegex } })
+    .sort({ createdAt: -1 })
+    .toArray();
+  return orders;
+}
+
+export async function getOrdersByEmail(email: string): Promise<Order[]> {
+  const db = await getDatabase();
+  const orders = await db.collection<Order>('orders')
+    .find({ customerEmail: { $regex: new RegExp(`^${email}$`, 'i') } })
+    .sort({ createdAt: -1 })
+    .toArray();
+  return orders;
+}
+
+// Order Statistics for Admin Dashboard
+export interface OrderStats {
+  today: { count: number; revenue: number };
+  thisWeek: { count: number; revenue: number };
+  thisMonth: { count: number; revenue: number };
+  allTime: { count: number; revenue: number };
+  pending: number;
+  confirmed: number;
+  preparing: number;
+  ready: number;
+  delivered: number;
+  cancelled: number;
+}
+
+export async function getOrderStats(): Promise<OrderStats> {
+  const db = await getDatabase();
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+
+  // Start of this week (Sunday)
+  const dayOfWeek = now.getDay();
+  const startOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - dayOfWeek).toISOString();
+
+  // Start of this month
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+  const allOrders = await db.collection<Order>('orders').find({}).toArray();
+
+  const stats: OrderStats = {
+    today: { count: 0, revenue: 0 },
+    thisWeek: { count: 0, revenue: 0 },
+    thisMonth: { count: 0, revenue: 0 },
+    allTime: { count: allOrders.length, revenue: 0 },
+    pending: 0,
+    confirmed: 0,
+    preparing: 0,
+    ready: 0,
+    delivered: 0,
+    cancelled: 0
+  };
+
+  for (const order of allOrders) {
+    const orderDate = order.createdAt;
+    const price = order.totalPrice || 0;
+
+    // All time revenue (exclude cancelled)
+    if (order.status !== 'cancelled') {
+      stats.allTime.revenue += price;
+    }
+
+    // Today
+    if (orderDate >= startOfToday) {
+      stats.today.count++;
+      if (order.status !== 'cancelled') {
+        stats.today.revenue += price;
+      }
+    }
+
+    // This week
+    if (orderDate >= startOfWeek) {
+      stats.thisWeek.count++;
+      if (order.status !== 'cancelled') {
+        stats.thisWeek.revenue += price;
+      }
+    }
+
+    // This month
+    if (orderDate >= startOfMonth) {
+      stats.thisMonth.count++;
+      if (order.status !== 'cancelled') {
+        stats.thisMonth.revenue += price;
+      }
+    }
+
+    // Status counts
+    switch (order.status) {
+      case 'pending': stats.pending++; break;
+      case 'confirmed': stats.confirmed++; break;
+      case 'preparing': stats.preparing++; break;
+      case 'ready': stats.ready++; break;
+      case 'delivered': stats.delivered++; break;
+      case 'cancelled': stats.cancelled++; break;
+    }
+  }
+
+  return stats;
+}

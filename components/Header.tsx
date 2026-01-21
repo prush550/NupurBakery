@@ -25,6 +25,9 @@ export default function Header() {
             <Link href="/products" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Products
             </Link>
+            <Link href="/track-order" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
+              Track Order
+            </Link>
             <Link href="/#contact" className="text-gray-700 hover:text-primary-600 transition-colors font-medium">
               Contact
             </Link>
@@ -83,6 +86,13 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
             >
               Products
+            </Link>
+            <Link
+              href="/track-order"
+              className="block text-gray-700 hover:text-primary-600 transition-colors font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Track Order
             </Link>
             <Link
               href="/#contact"
