@@ -73,6 +73,10 @@ export interface Order {
   weight?: string;
   specialInstructions?: string;
 
+  // Coupon
+  couponCode?: string;
+  discountPercent?: number;
+
   // Order metadata
   status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
   totalPrice: number;
@@ -93,4 +97,27 @@ export interface OrderFormData {
   flavor?: string;
   weight?: string;
   specialInstructions?: string;
+  couponCode?: string;
+}
+
+// Coupon types for treasure hunt game
+export interface Coupon {
+  _id?: ObjectId;
+  id: string;
+  code: string;
+  discountPercent: number;
+  validDate: string; // YYYY-MM-DD format - valid only on this day
+  usedBy?: string; // customer email who used it
+  usedAt?: string;
+  createdAt: string;
+}
+
+export interface DailyPuzzle {
+  _id?: ObjectId;
+  id: string;
+  date: string; // YYYY-MM-DD format
+  puzzle: string;
+  answer: string; // 3-digit passcode
+  couponsGenerated: number; // max 3 per day
+  createdAt: string;
 }

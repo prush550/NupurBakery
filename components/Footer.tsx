@@ -1,3 +1,5 @@
+import HiddenScrew from './HiddenScrew';
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-white section-padding">
@@ -6,7 +8,7 @@ export default function Footer() {
           <div>
             <h3 className="text-2xl font-bold gradient-text mb-4">Nupur Bakery</h3>
             <p className="text-gray-400">
-              Nupur's Messy Kitchen by Divya 'Nupur' Tiwari - Creating delicious memories, one cake at a time.
+              Nupur's Messy Kitchen by Divya 'Nupur' Tiwari - Creating delicious memories, one cake at a time. <HiddenScrew />
             </p>
           </div>
 

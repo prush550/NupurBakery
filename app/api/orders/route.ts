@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createOrder, getOrders, getProductById } from '@/lib/db';
+import { createOrder, getOrders, getProductById, validateCoupon, useCoupon } from '@/lib/db';
 import { isAuthenticated } from '@/lib/auth';
 import { sendOrderConfirmationEmail, sendOwnerNotificationEmail } from '@/lib/email';
 import { Order, ApiResponse, OrderFormData } from '@/lib/types';
@@ -57,8 +57,19 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
       product = await getProductById(body.productId);
     }
 
-    // Create order
-    const order = await createOrder(body, product);
+    // Validate and apply coupon if provided
+    let discount = 0;
+    if (body.couponCode) {
+      const couponResult = await validateCoupon(body.couponCode);
+      if (couponResult.valid) {
+        discount = couponResult.discount;
+        // Mark coupon as used
+        await useCoupon(body.couponCode, body.customerEmail);
+      }
+    }
+
+    // Create order with discount
+    const order = await createOrder(body, product, discount);
 
     // Send emails (don't block on email sending)
     try {

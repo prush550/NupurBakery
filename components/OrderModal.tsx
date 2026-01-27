@@ -50,6 +50,10 @@ export default function OrderModal({ product, onClose }: OrderModalProps) {
   const [flavor, setFlavor] = useState('');
   const [weight, setWeight] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
+  const [couponCode, setCouponCode] = useState('');
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponMessage, setCouponMessage] = useState('');
 
   // Get minimum date (tomorrow)
   const getMinDate = () => {
@@ -72,6 +76,39 @@ export default function OrderModal({ product, onClose }: OrderModalProps) {
     };
   }, [onClose, loading]);
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+
+    try {
+      const response = await fetch('/api/coupon/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponCode.trim() })
+      });
+
+      const data = await response.json();
+      if (data.success && data.data.valid) {
+        setCouponApplied(true);
+        setCouponDiscount(data.data.discount);
+        setCouponMessage(data.data.message);
+      } else {
+        setCouponApplied(false);
+        setCouponDiscount(0);
+        setCouponMessage(data.data?.message || 'Invalid coupon');
+      }
+    } catch {
+      setCouponMessage('Failed to validate coupon');
+    }
+  };
+
+  const getDiscountedPrice = () => {
+    const basePrice = product?.price || 1000;
+    if (couponApplied && couponDiscount > 0) {
+      return Math.round(basePrice * (1 - couponDiscount / 100));
+    }
+    return basePrice;
+  };
+
   const handleSubmit = async () => {
     setError('');
     setLoading(true);
@@ -92,7 +129,8 @@ export default function OrderModal({ product, onClose }: OrderModalProps) {
           cakeMessage,
           flavor,
           weight,
-          specialInstructions
+          specialInstructions,
+          couponCode: couponApplied ? couponCode : undefined
         })
       });
 
@@ -448,11 +486,69 @@ export default function OrderModal({ product, onClose }: OrderModalProps) {
                 )}
               </div>
 
+              {/* Coupon Code */}
+              <div className="border rounded-lg p-4 mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Have a coupon code?</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => {
+                      setCouponCode(e.target.value.toUpperCase());
+                      setCouponApplied(false);
+                      setCouponMessage('');
+                    }}
+                    placeholder="Enter coupon code"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm"
+                    disabled={couponApplied}
+                  />
+                  {couponApplied ? (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCouponApplied(false);
+                        setCouponCode('');
+                        setCouponDiscount(0);
+                        setCouponMessage('');
+                      }}
+                      className="px-4 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200"
+                    >
+                      Remove
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200"
+                    >
+                      Apply
+                    </button>
+                  )}
+                </div>
+                {couponMessage && (
+                  <p className={`text-sm mt-2 ${couponApplied ? 'text-green-600' : 'text-red-600'}`}>
+                    {couponMessage}
+                  </p>
+                )}
+              </div>
+
               <div className="bg-primary-50 p-4 rounded-lg mt-4">
+                {couponApplied && (
+                  <div className="flex justify-between items-center mb-2 text-sm">
+                    <span className="text-gray-600">Original Price</span>
+                    <span className="text-gray-500 line-through">₹{(product?.price || 1000).toLocaleString()}</span>
+                  </div>
+                )}
+                {couponApplied && (
+                  <div className="flex justify-between items-center mb-2 text-sm">
+                    <span className="text-green-600">Discount ({couponDiscount}%)</span>
+                    <span className="text-green-600">-₹{Math.round((product?.price || 1000) * couponDiscount / 100).toLocaleString()}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center">
                   <span className="text-gray-700 font-medium">Estimated Total</span>
                   <span className="text-2xl font-bold text-primary-600">
-                    ₹{(product?.price || 1000).toLocaleString()}+
+                    ₹{getDiscountedPrice().toLocaleString()}+
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">

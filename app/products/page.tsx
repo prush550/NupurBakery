@@ -5,6 +5,7 @@ import { Product } from '@/lib/types';
 import ProductCard from '@/components/ProductCard';
 import ProductModal from '@/components/ProductModal';
 import OrderModal from '@/components/OrderModal';
+import HiddenNut from '@/components/HiddenNut';
 
 type SortOption = 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc' | 'time-asc' | 'time-desc';
 
@@ -266,6 +267,9 @@ export default function ProductsPage() {
           }}
         />
       )}
+
+      {/* Hidden Nut for Treasure Hunt */}
+      <HiddenNut />
     </div>
   );
 }
